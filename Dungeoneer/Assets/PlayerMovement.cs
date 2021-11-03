@@ -1,14 +1,29 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
+public enum PlayerState
+{
+    Moving,
+    Hit
+}
 public class PlayerMovement : MonoBehaviour
 {
     private int layerMask;
     public float moveSpeed = 5f;
 
+    [HideInInspector]
+    public PlayerState currentState;
+
+    private int currentWeapon = 0;
+    public Transform weaponHand;
+
+
+
     public Rigidbody2D rb;
 
+    [HideInInspector]
     public Direction direction = Direction.Down;
 
     private bool up, down, left, right;
@@ -22,10 +37,6 @@ public class PlayerMovement : MonoBehaviour
     public float rayLength = .5f;
 
     public LayerMask enemyLayers;
-    public Transform attackRange;
-    public float attackSize = .5f;
-    [SerializeField]
-    private float charge1 = .25f, charge2 = .5f, charge3 = .75f;
     private float chargeTimer = 0f;
 
     public enum Direction
@@ -41,62 +52,102 @@ public class PlayerMovement : MonoBehaviour
     private void Start()
     {
         layerMask = LayerMask.GetMask("Wall");
+        if (transform.childCount < 2)
+        {
+            SwapGear();
+        }
+    }
 
-        gameObject.GetComponent<HealthSystem>().Startup(0);
+    public void SwapGear()
+    {
+        for (int i = 0; i < transform.childCount; i++)
+        {
+            if (transform.GetChild(i).name != "WeaponHand")
+            {
+                Destroy(transform.GetChild(i).gameObject);
+            }
+        }
+        for (int i = 0; i < GetComponentInParent<HudScript>().equippedGear.Length; i++)
+        {
+            if (GetComponentInParent<HudScript>().equippedGear[i] != Gear.Empty)
+            {
+                GameObject gear = (GameObject)Instantiate(Resources.Load("Gear/" + GetComponentInParent<HudScript>().equippedGear[i].ToString()), transform);
+                gear.name = GetComponentInParent<HudScript>().equippedGear[i].ToString();
+            }
+        }
     }
 
     private void Controls()
     {
-        if (Input.GetButtonDown("Fire1"))
+        AnimatorClipInfo[] animatorClipInfo = animator.GetCurrentAnimatorClipInfo(0);
+        string clipName = animatorClipInfo[0].clip.name;
+
+        if (Input.GetButtonDown("WeaponAttack") && !clipName.Contains("Attack"))
         {
             animator.SetTrigger("Attack");
+            transform.GetChild(currentWeapon);
+            transform.Find(GetComponent<HudScript>().equippedGear[0].ToString()).GetComponent<Animator>().SetTrigger("Attacking");
+            //GetComponent<HudScript>().equippedGear[currentWeapon].GetComponent<Animator>().SetTrigger("Attacking");
+            transform.Find(GetComponent<HudScript>().equippedGear[0].ToString()).GetComponent<Animator>().speed = animator.speed = 0;
+            animator.SetFloat("Speed", 0f);
         }
         else
         {
-            if (Input.GetButton("Fire1"))
+            if (Input.GetButton("WeaponAttack"))
             {
-                animator.speed = 0;
-                animator.SetFloat("Speed", 0f);
+
+                //GetComponent<HudScript>().weaponList[currentWeapon].SetActive(true);
+                transform.Find(GetComponent<HudScript>().equippedGear[0].ToString()).transform.position = weaponHand.transform.position;
+
+                switch (direction)
+                {
+                    case Direction.Right:
+                        transform.Find(GetComponent<HudScript>().equippedGear[0].ToString()).GetComponent<Animator>().SetFloat("Horizontal", 1);
+                        transform.Find(GetComponent<HudScript>().equippedGear[0].ToString()).GetComponent<Animator>().SetFloat("Vertical", 0);
+                        break;
+                    case Direction.Left:
+                        transform.Find(GetComponent<HudScript>().equippedGear[0].ToString()).GetComponent<Animator>().SetFloat("Horizontal", -1);
+                        transform.Find(GetComponent<HudScript>().equippedGear[0].ToString()).GetComponent<Animator>().SetFloat("Vertical", 0);
+                        break;
+                    case Direction.Down:
+                        transform.Find(GetComponent<HudScript>().equippedGear[0].ToString()).GetComponent<Animator>().SetFloat("Horizontal", 0);
+                        transform.Find(GetComponent<HudScript>().equippedGear[0].ToString()).GetComponent<Animator>().SetFloat("Vertical", -1);
+                        break;
+                    case Direction.Up:
+                        transform.Find(GetComponent<HudScript>().equippedGear[0].ToString()).GetComponent<Animator>().SetFloat("Horizontal", 0);
+                        transform.Find(GetComponent<HudScript>().equippedGear[0].ToString()).GetComponent<Animator>().SetFloat("Vertical", 1);
+                        break;
+                }
+
+
                 movement = Vector2.zero;
                 chargeTimer += Time.deltaTime;
             }
-            else if (Input.GetButtonUp("Fire1"))
+            else if (Input.GetButtonUp("WeaponAttack"))
             {
-                animator.speed = 1;
+                transform.Find(GetComponent<HudScript>().equippedGear[0].ToString()).transform.position = weaponHand.transform.position;
+                transform.Find(GetComponent<HudScript>().equippedGear[0].ToString()).GetComponent<Animator>().speed = animator.speed = 1;
             }
             else
             {
                 Movement();
             }
         }
+
+        if (Input.GetButtonDown("SwapElement") && !clipName.Contains("Attack"))
+        {
+            GetComponent<HudScript>().SwapElements();
+        }
+        if (Input.GetButtonDown("SwapWeapon") && !clipName.Contains("Attack"))
+        {
+            GetComponent<HudScript>().SwapWeapon();
+        }
     }
 
     private void Attack()
     {
-        int damageMod;
-        if(chargeTimer <  charge1)
-        {
-            damageMod = 1;
-        }
-        else if(chargeTimer >= charge1 && chargeTimer < charge2)
-        {
-            damageMod = 2;
-        }
-        else if(chargeTimer >= charge2 && chargeTimer < charge3)
-        {
-            damageMod = 3;
-        }
-        else
-        {
-            damageMod = 5;
-        }
+        transform.Find(GetComponent<HudScript>().equippedGear[0].ToString()).GetComponent<WeaponScript>().WeaponAttack(chargeTimer, enemyLayers);
         chargeTimer = 0f;
-        Collider2D[] hitEnemies = Physics2D.OverlapCircleAll(attackRange.position, attackSize, enemyLayers);
-
-        foreach(Collider2D enemy in hitEnemies)
-        {
-            enemy.GetComponent<HealthSystem>().Damage(1 * damageMod);
-        }
     }
 
     private void Movement()
@@ -117,8 +168,9 @@ public class PlayerMovement : MonoBehaviour
             animator.speed = 1;
         }
 
-        if(clipName.Contains("Attack"))
+        if (clipName.Contains("Attack"))
         {
+            transform.Find(GetComponent<HudScript>().equippedGear[0].ToString()).transform.position = weaponHand.transform.position;
             movement = Vector2.zero;
             animator.SetFloat("Speed", 0f);
         }
@@ -213,37 +265,44 @@ public class PlayerMovement : MonoBehaviour
 
     void Update()
     {
-        Controls();
-
-        if (attackRange.gameObject.activeInHierarchy)
+        if (currentState != PlayerState.Hit && !PauseScript.isPaused)
         {
-            Attack();
+            Controls();
+
+            if (transform.Find(GetComponent<HudScript>().equippedGear[0].ToString()).GetComponent<WeaponScript>().attackRange.gameObject.activeInHierarchy)
+            {
+                Attack();
+            }
         }
+
     }
 
     private void FixedUpdate()
     {
-        rb.MovePosition(rb.position + movement * moveSpeed * Time.fixedDeltaTime);
-
-        currentPos = rb.transform.position;
-
-        if (movement.x == -1 || movement.x == 1 || movement.y == -1 || movement.y == 1)
+        if (currentState != PlayerState.Hit && !PauseScript.isPaused)
         {
-            if (currentPos.x == lastPos.x && movement.x != 0 || currentPos.y == lastPos.y && movement.y != 0)
+            rb.MovePosition(rb.position + movement * moveSpeed * Time.fixedDeltaTime);
+
+            currentPos = rb.transform.position;
+
+            if (movement.x == -1 || movement.x == 1 || movement.y == -1 || movement.y == 1)
             {
-                animator.SetBool("Wall", true);
-                animator.SetFloat("Speed", 1);
+                if (currentPos.x == lastPos.x && movement.x != 0 || currentPos.y == lastPos.y && movement.y != 0)
+                {
+                    animator.SetBool("Wall", true);
+                    animator.SetFloat("Speed", 1);
+                }
+                else
+                {
+                    animator.SetBool("Wall", false);
+                }
             }
             else
             {
                 animator.SetBool("Wall", false);
             }
-        }
-        else
-        {
-            animator.SetBool("Wall", false);
-        }
 
-        lastPos = currentPos;
+            lastPos = currentPos;
+        }
     }
 }
