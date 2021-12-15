@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &7808700618840478248
+--- !u!1 &449222873625434304
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,40 +8,40 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 7808700618840478253}
-  - component: {fileID: 7808700618840478254}
-  - component: {fileID: 7808700618840478255}
-  - component: {fileID: -4631452059531864155}
-  - component: {fileID: -1501229705987084614}
-  - component: {fileID: -5588456947598565446}
+  - component: {fileID: 449222873625434311}
+  - component: {fileID: 449222873625434310}
+  - component: {fileID: 449222873625434305}
+  - component: {fileID: -7779096760642636395}
+  - component: {fileID: 9218432405986902700}
+  - component: {fileID: -2251015979477192886}
   m_Layer: 0
-  m_Name: Ice 1
+  m_Name: Ice 2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &7808700618840478253
+--- !u!4 &449222873625434311
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7808700618840478248}
+  m_GameObject: {fileID: 449222873625434304}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.54, y: -3.29, z: 0}
-  m_LocalScale: {x: 0.1, y: 0.1, z: 1}
+  m_LocalPosition: {x: 1.2, y: -2.79, z: 0}
+  m_LocalScale: {x: 0.2, y: 0.2, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1971053207 &7808700618840478254
+--- !u!1971053207 &449222873625434310
 SpriteShapeRenderer:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7808700618840478248}
+  m_GameObject: {fileID: 449222873625434304}
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
@@ -83,13 +83,13 @@ SpriteShapeRenderer:
   m_LocalAABB:
     m_Center: {x: 0.004527569, y: 0.11704159, z: 0}
     m_Extent: {x: 2.512545, y: 2.3340974, z: 0}
---- !u!114 &7808700618840478255
+--- !u!114 &449222873625434305
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7808700618840478248}
+  m_GameObject: {fileID: 449222873625434304}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 90539df1cd5704abcb25fec9f3f5f84b, type: 3}
@@ -193,14 +193,14 @@ MonoBehaviour:
   m_OptimizeGeometry: 1
   m_EnableTangents: 0
   m_GeometryCached: 0
---- !u!50 &-4631452059531864155
+--- !u!50 &-7779096760642636395
 Rigidbody2D:
   serializedVersion: 4
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7808700618840478248}
+  m_GameObject: {fileID: 449222873625434304}
   m_BodyType: 0
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
@@ -214,13 +214,13 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 1
   m_Constraints: 4
---- !u!58 &-1501229705987084614
+--- !u!58 &9218432405986902700
 CircleCollider2D:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7808700618840478248}
+  m_GameObject: {fileID: 449222873625434304}
   m_Enabled: 1
   m_Density: 1
   m_Material: {fileID: 0}
@@ -230,22 +230,22 @@ CircleCollider2D:
   m_Offset: {x: 0.004527569, y: 0.11704159}
   serializedVersion: 2
   m_Radius: 2.512545
---- !u!114 &-5588456947598565446
+--- !u!114 &-2251015979477192886
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7808700618840478248}
+  m_GameObject: {fileID: 449222873625434304}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 16f7f109a57887c429658ac1e2966321, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  damage: 2
+  damage: 3
   velocity: 6
-  duration: 1.5
-  statusTime: 2
+  duration: 1.25
+  statusTime: 2.5
   statusDamage: 1
   status: 4
-  spellType: 0
+  spellType: 2
